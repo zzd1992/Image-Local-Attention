@@ -1,2 +1,1 @@
-# Local-Attention
-A better CUDA and PyTorch implementation of local attention.
+# Local Attention: Better CUDA and PyTorch Implementation
