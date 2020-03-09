@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Attention is widely used in deep learning now. Given a query, a collection of keys and values, the output of an attention module is the weighted sum of all values. The weights are obtained based on the similarities between the query and keys which are usually measured by their inner products. However, when the number of keys is large, it is expensive to apply such a module.
+Attention is widely used in deep learning now. Given a query and a collection of key-value pairs, the output of an attention module is the weighted sum of all values. The weights are obtained based on the similarities between the query and keys which are usually measured by their inner products. However, when the number of keys is large, it is expensive to apply such a module.
 
 Researchers consider local attention to address this problem. That is a small subset of keys is involved given a query. For images, "local" means an image region around a pixel. Image local attention achieves great success on image restoration tasks. However, current implementations are based on the `im2col` operation which is memory expensive especially when the local patch is large.
 
