@@ -14,7 +14,7 @@ Here, queries **Q**, keys **K** and value **V** are represented in `CHW` (channe
 * compute similarity matrix **W** between **Q** and **K**: `KKHW`.
 * output **O** is the sum of **V** weighted by **W**: `CHW`.
 
-Clearly, the first step requires `KK` times memory to store **K** and **V**. However, this can be avoided. In our implementation, we compute **W** without rearranging keys and values. To this end, we write two CUDA kernels to compute **W** and **O**. And we build a PyTorch extension based on them. *Our implementation reduces the GPU memory by an order of magnitude and it is faster compared with the plain PyTorch implementations*.
+Clearly, the first step requires `KK` times memory to store rearranged **K** and **V**. However, this can be avoided. In our implementation, we compute **W** without rearranging keys and values. To this end, we write two CUDA kernels to compute **W** and **O**. And we build a PyTorch extension based on them. *Our implementation reduces the GPU memory by an order of magnitude and it is faster compared with the plain PyTorch implementations*.
 
 
 ## Install and usage
