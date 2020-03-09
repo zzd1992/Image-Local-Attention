@@ -62,6 +62,8 @@ We evaluate the memory and speed of our implementation compared with the plain P
 |  11  |        3.4%         |
 |  21  |        2.3%         |
 
-When the size of input tensor is small, our implementation is faster and vice versa. For example, when `H=W=32` and `K=5`, our implementation is faster. When `H=W=128` and `K=21`, our implementation is much slower. A better trade-off between memory and speed is required in future.
+When the size of input tensor is small, our implementation is faster and vice versa. For example, when `H=W=32` and `K=5`, our implementation is faster. When `H=W=128` and `K=21`, our implementation is much slower. 
+
+**A better trade-off between memory and speed is required in future.**
 
 Refer `/test` for more results.
