@@ -14,7 +14,7 @@ Here, queries **Q**, keys **K** and value **V** are represented in `CHW` (channe
 * compute similarity matrix **W** between **Q** and **K**: `KKHW`.
 * output **O** is the sum of **V** weighted by **W**: `CHW`.
 
-Clearly, the first step requires `KK` times memory to store rearranged **K** and **V**. However, this can be avoided. In our implementation, we compute **W** without rearranging keys and values. To this end, we write two CUDA kernels to compute **W** and **O**. And we build a PyTorch extension based on them. *Our implementation reduces the GPU memory by an order of magnitude and it is faster compared with the plain PyTorch implementations*.
+Clearly, the first step requires `KK` times memory to store rearranged **K** and **V**. However, this can be avoided. In our implementation, we compute **W** without rearranging keys and values. To this end, we write two CUDA kernels to compute **W** and **O**. And we build a PyTorch extension based on them. *Our implementation reduces the GPU memory by an order of magnitude compared with the plain PyTorch implementations*.
 
 
 ## Install and usage
@@ -48,18 +48,20 @@ y = module(x)
 
 ## Performance
 
-We evaluate the memory and speed of our implementation compared with the plain PyTorch implementation. The first table show performance for forward pass. The second table show over-all performance for forward-backward loop.
+We evaluate the memory and speed of our implementation compared with the plain PyTorch implementation. The first table show relative GPU memory for forward pass. The second table show relative GPU memory for forward-backward loop.
 
-|  K   | Relative GPU Memory | Relative Time |
-| :--: | :-----------------: | :-----------: |
-|  5   |        10.2%        |     51.6%     |
-|  11  |        3.2%         |     51.6%     |
-|  21  |        2.0%         |     51.6%     |
+|  K   | Relative GPU Memory | 
+| :--: | :-----------------: | 
+|  5   |        10.2%        |    
+|  11  |        3.2%         | 
+|  21  |        2.0%         |
 
-|  K   | Relative GPU Memory | Relative Time |
-| :--: | :-----------------: | :-----------: |
-|  5   |        9.0%         |     71.1%     |
-|  11  |        3.4%         |     65.1%     |
-|  21  |        2.3%         |     70.7%     |
+|  K   | Relative GPU Memory | 
+| :--: | :-----------------: |
+|  5   |        9.0%         |
+|  11  |        3.4%         |
+|  21  |        2.3%         |
+
+When the size of input tensor is small, our implementation is faster and vice versa. For example, when `H=W=32` and `K=5`, our implementation is faster. When `H=W=128` and `K=21`, our implementation is much slower. A better trade-off between memory and speed is required in future.
 
 Refer `/test` for more results.
