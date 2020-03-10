@@ -32,7 +32,6 @@ torch::Tensor similar_cuda_forward(
         start_inp += per_input;
         start_out += per_output;
     }
-    cudaDeviceSynchronize();
 
     return output;
 }
@@ -75,7 +74,6 @@ torch::Tensor similar_cuda_backward(
         );
         start_inp += per_input;
     }
-    cudaDeviceSynchronize();
 
     return grad_inp;
 }

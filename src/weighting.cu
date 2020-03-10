@@ -33,7 +33,6 @@ torch::Tensor weighting_cuda_forward(
         );
         start_inp += per_input;
     }
-    cudaDeviceSynchronize();
 
     return output;
 }
@@ -73,7 +72,6 @@ torch::Tensor weighting_cuda_backward_ori(
         );
         start_inp += per_input;
     }
-    cudaDeviceSynchronize();
 
     return grad_ori;
 }
@@ -114,7 +112,6 @@ torch::Tensor weighting_cuda_backward_weight(
         start_inp += per_input;
         start_out += per_output;
     }
-    cudaDeviceSynchronize();
 
     return grad_weight;
 }
