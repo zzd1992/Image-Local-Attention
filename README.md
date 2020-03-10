@@ -12,9 +12,9 @@ Here, queries **Q**, keys **K** and value **V** are represented in `CHW` (channe
 
 * rearrange **K** and **V** to `(kk)CHW` tensors via `im2col`.
 * compute similarity matrix **W** between **Q** and **K**: `(kk)HW`.
-* output **O** is the sum of **V** weighted by **W**: `CHW`.
+* compute output **O** by summation of **V** weighted by **W**: `CHW`.
 
-Clearly, the first step requires `kk` times memory to store rearranged **K** and **V**. However, this can be avoided. In our implementation, we compute **W** without rearranging keys and values. To this end, we write two CUDA kernels to compute **W** and **O**. And we build a PyTorch extension based on them.
+Clearly, the first step requires `kk` times memory to store the rearranged **K** and **V**. However, this can be avoided. In our implementation, we compute **W** and **O** without rearranging keys and values. To this end, we write two CUDA kernels. And we build a PyTorch extension based on them.
 
 
 ## Install and usage
