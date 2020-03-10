@@ -50,15 +50,19 @@ def test_efficiency_forward(h, w, c, kh, kw):
         del z
 
     with torch.no_grad():
+        torch.cuda.synchronize()
         t = time.time()
         for i in range(3):
             z = f_similar(x, y, kh, kw)
+        torch.cuda.synchronize()
         t = (time.time() - t) / 3
         del z
-
+        
+        torch.cuda.synchronize()
         t_torch = time.time()
         for i in range(3):
             z = TorchLocalAttention.f_similar(x, y, kh, kw)
+        torch.cuda.synchronize()
         t_torch = (time.time() - t_torch) / 3
         del z
     print("{:.2f},{:.2f}||{:.5f},{:.5f}".format(memory_torch, memory, t_torch, t))
@@ -88,21 +92,25 @@ def test_efficiency_backward(h, w, c, kh, kw):
     y.grad.data.zero_()
     del z
 
+    torch.cuda.synchronize()
     t = time.time()
     for i in range(3):
         z = f_similar(x, y, kh, kw)
         z.backward(grad)
         x.grad.data.zero_()
         y.grad.data.zero_()
+    torch.cuda.synchronize()
     t = (time.time() - t) / 3
     del z
 
+    torch.cuda.synchronize()
     t_torch = time.time()
     for i in range(3):
         z = TorchLocalAttention.f_similar(x, y, kh, kw)
         z.backward(grad)
         x.grad.data.zero_()
         y.grad.data.zero_()
+    torch.cuda.synchronize()
     t_torch = (time.time() - t_torch) / 3
     del z
     print("{:.2f},{:.2f}||{:.5f},{:.5f}".format(memory_torch, memory, t_torch, t))
