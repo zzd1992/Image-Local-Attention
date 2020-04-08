@@ -31,7 +31,7 @@ __global__ void cc2k(
                 const dt *p_ori = x_ori + indexO;
                 const dt *p_loc = x_loc + h * width + w;
                 for (int c = 0; c < channels; ++c) {
-                    val += static_cast<dtc> ((*p_ori) * (*p_loc));
+                    val += static_cast<dtc> (__ldg(p_ori) * __ldg(p_loc));
                     p_ori += per_channel;
                     p_loc += per_channel;
                 }
@@ -71,7 +71,8 @@ __global__ void ck2c_ori(
             const int w = w_ori + indexK % kW;
             const int h = h_ori + indexK / kW;
             if (h > -1 && h < height && w > -1 && w < width) {
-                val += static_cast<dtc> (p_loc[width * h + w] * p_weight[indexK]);
+                val += static_cast<dtc> (__ldg(p_loc + width * h + w) *
+                        __ldg(p_weight + indexK));
             }
         }
         y[index] = static_cast<dt> (val);
@@ -107,9 +108,10 @@ __global__ void ck2c_loc(
             const int w = w_ori - indexK % kW;
             const int h = h_ori - indexK / kW;
             const int indexW = width * h + w;
+
             if (h > -1 && h < height && w > -1 && w < width) {
-                val += static_cast<dtc> (p_ori[indexW] *
-                                         x_weight[indexW * patch + indexK]);
+                val += static_cast<dtc> (__ldg(p_ori + indexW) *
+                        __ldg(x_weight + indexW * patch + indexK));
             }
         }
         y[index] = static_cast<dt> (val);
@@ -134,7 +136,7 @@ void f_cc2k(
         const int width,
         const int per_channel,
         dt *y) {
-    cc2k<dt, dtc> << < min(per_channel, MAX_PIXELS_2d), CUDA_NUM_THREADS, 0, stream >> > (
+    cc2k<dt, dtc> <<< min(per_channel, MAX_PIXELS_2d), CUDA_NUM_THREADS, 0, stream >>> (
             x_ori, x_loc,
                     kH, kW, rH, rW,
                     patch, channels,
@@ -158,7 +160,7 @@ void f_ck2c_ori(
         const int per_channel,
         const int per_inp,
         dt *y) {
-    ck2c_ori<dt, dtc> << < GET_BLOCKS(min(per_inp, MAX_PIXELS_3d)), CUDA_NUM_THREADS, 0, stream >> > (
+    ck2c_ori<dt, dtc> <<< GET_BLOCKS(min(per_inp, MAX_PIXELS_3d)), CUDA_NUM_THREADS, 0, stream >>> (
             x_loc, x_weight,
                     kH, kW, rH, rW,
                     patch, height, width,
@@ -183,7 +185,7 @@ void f_ck2c_loc(
         const int per_channel,
         const int per_inp,
         dt *y) {
-    ck2c_loc<dt, dtc> << < GET_BLOCKS(min(per_inp, MAX_PIXELS_3d)), CUDA_NUM_THREADS, 0, stream >> > (
+    ck2c_loc<dt, dtc> <<< GET_BLOCKS(min(per_inp, MAX_PIXELS_3d)), CUDA_NUM_THREADS, 0, stream >>> (
             x_ori, x_weight,
                     kH, kW, rH, rW,
                     patch, height, width,
