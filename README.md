@@ -52,15 +52,15 @@ We evaluate the relative GPU memory and running time of our implementation compa
 
 |  k   | Relative GPU Memory | Relative running time |
 | :--: | :-----------------: | :-------------------: |
-|  5   |        10.2%        |         33.2%         |
-|  11  |        3.2%         |         16.2%         | 
-|  21  |        2.0%         |         31.4%         |
+|  5   |        10.2%        |         31.4%         |
+|  11  |        3.2%         |         15.6%         | 
+|  21  |        2.0%         |         26.5%         |
 
 |  k   | Relative GPU Memory | Relative running time |
 | :--: | :-----------------: | :-------------------: |
-|  5   |        9.0%         |         31.8%         |
-|  11  |        3.4%         |         20.8%         |
-|  21  |        2.3%         |         50.2%         |
+|  5   |        9.0%         |         31.2%         |
+|  11  |        3.4%         |         21.5%         |
+|  21  |        2.3%         |         47.3%         |
 
 **Our implementation reduces the GPU memory by an order of magnitude and it is faster compared with the plain PyTorch implementations**.
 
