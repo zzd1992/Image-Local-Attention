@@ -8,6 +8,7 @@ torch::Tensor similar_cuda_forward(
     TypeCheck(x_ori);
     TypeCheck(x_loc);
     const int batch = x_ori.size(0);
+    const int batch_loc = x_loc.size(0);
     const int channels = x_ori.size(1);
     const int height = x_ori.size(2);
     const int width = x_ori.size(3);
@@ -18,13 +19,15 @@ torch::Tensor similar_cuda_forward(
     const int per_channel = height * width;
     const int per_input = per_channel * channels;
     const int per_output = height * width * patch;
-    auto output = torch::empty({batch, height, width, patch}, x_ori.options());
+    auto output = torch::empty({batch_loc, height, width, patch}, x_ori.options());
 
     int start_inp = 0, start_out = 0;
-    for (int i = 0; i < batch; ++i) {
+    int start_inp2 = 0;
+    for (int i = 0; i < batch_loc; ++i) {
+        if ((batch < batch_loc) && (batch == 1)) { start_inp2 = 0; }
         f_cc2k<float, double>(
                 at::cuda::getCurrentCUDAStream(),
-                x_ori.data_ptr<float>() + start_inp,
+                x_ori.data_ptr<float>() + start_inp2,
                 x_loc.data_ptr<float>() + start_inp,
                 kH, kW, rH, rW,
                 patch, channels, height, width,
@@ -32,6 +35,7 @@ torch::Tensor similar_cuda_forward(
                 output.data_ptr<float>() + start_out
         );
         start_inp += per_input;
+        start_inp2 += per_input;
         start_out += per_output;
     }
 
@@ -48,6 +52,7 @@ torch::Tensor similar_cuda_backward(
 ) {
     TypeCheck(x);
     const int batch = x.size(0);
+    const int batch_out = grad_out.size(0);
     const int channels = x.size(1);
     const int height = x.size(2);
     const int width = x.size(3);
@@ -60,19 +65,20 @@ torch::Tensor similar_cuda_backward(
 
     auto grad_inp = torch::empty({batch, channels, height, width}, x.options());
 
-    int start_inp = 0;
+    int start_inp = 0; int start_inp2 = 0;
     for (int i = 0; i < batch; ++i) {
         auto grad_out_row = grad_out.select(0, i);
         if (is_ori) {
+            if ((batch < batch_out) && (batch == 1)) { start_inp2 = 0; }
             f_ck2c_ori<float, double>(
                     at::cuda::getCurrentCUDAStream(),
-                    x.data_ptr<float>() + start_inp,
+                    x.data_ptr<float>() + start_inp2,
                     grad_out_row.data_ptr<float>(),
                     kH, kW, rH, rW,
                     patch, channels,
                     height, width,
                     per_channel, per_input,
-                    grad_inp.data_ptr<float>() + start_inp
+                    grad_inp.data_ptr<float>() + start_inp2
             );
         } else {
             f_ck2c_loc<float, double>(
@@ -87,6 +93,7 @@ torch::Tensor similar_cuda_backward(
             );
         }
         start_inp += per_input;
+        start_inp2 += per_input; 
     }
     return grad_inp;
 }
