@@ -8,6 +8,7 @@
 #define CUDA_NUM_THREADS 1024
 #define MAX_PIXELS_2d 1048576
 #define MAX_PIXELS_3d 16777216
+#define WARP_SIZE 32
 
 #define KERNEL_LOOP(i, I)                              \
 for (int i = threadIdx.x; i < (I); i += blockDim.x)

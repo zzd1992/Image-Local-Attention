@@ -134,9 +134,9 @@ def test_efficiency_backward(h, w, c, kh, kw):
 
 
 if __name__ == '__main__':
-    for im in [128, 64, 32]:
-        for c in [64, 32 ,16]:
-            for block in [21, 11, 5]:
+    for im in [64, 32, 16]:
+        for c in [32 ,16, 8]:
+            for block in [11, 5, 3]:
                 print("input:{} channel:{} block:{}".format(im, c, block))
                 test_correct(im, im, c, block, block)
                 test_efficiency_forward(im, im, c, block, block)
